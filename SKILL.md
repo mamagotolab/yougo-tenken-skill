@@ -1,6 +1,6 @@
 ---
 name: "yougo-tenken"
-description: "Use this skill when the user wants to check whether a draft explains its jargon well enough for readers outside the field: 「用語点検」「専門用語をチェック」「噛み砕けているか見て」「この記事、伝わる？」「難しい言葉が残っていないか」「ELI5」「yougo-tenken」. Reviews a finished draft and lists terms that are unexplained, or 'explained' in name only. Does not rewrite the text."
+description: "Use this skill when the user wants to check whether a document is readable by someone outside the team: manuals, handover documents, procedures, proposals, service pages, or articles. Triggers: 「用語点検」「専門用語をチェック」「この手順書、伝わる？」「引き継ぎ資料を見て」「新人に渡して読めるか」「難しい言葉が残っていないか」「ELI5」「yougo-tenken」. Finds unexplained jargon, in-house abbreviations, industry slang, internal system names, the writer's own coined phrases, and undefined relationships between the people, departments, and vendors that appear in the document. Does not rewrite the text."
 ---
 
 # 用語点検スキル
@@ -32,10 +32,34 @@ description: "Use this skill when the user wants to check whether a draft explai
 
 1. 読者を確認する（原稿から分かれば聞かない）
 2. `reference/iikae.md` を読む（過去の言い換え実例と、良い／悪いの判定基準）
-3. 原稿から**専門用語・略語・業界語・カタカナ語**を拾う。
-   **書き手がその原稿の中で作った言葉（造語・独自の言い回し）も対象です。**
-   自分で作った言葉は書き手には難しく見えないため、いちばん見落とされます。
-   例：「発火する」「実体」「ピア」「一覧の鮮度」——初出で意味が置かれていなければ指摘する
+3. 原稿から**次の5種類**を拾う。**技術用語だけを探さないこと。**
+   業務資料でいちばん詰まるのは、3〜5の「その職場でだけ通じるもの」です。
+
+   | # | 種類 | 例 |
+   |---|---|---|
+   | 1 | 一般的な専門用語・略語 | KPI、リードタイム、API |
+   | 2 | **書き手がその原稿で作った言い回し** | 「発火する」「実体」「一覧の鮮度」 |
+   | 3 | **社内の略語** | 「月次の締め」を指す独自の呼び方、部署の通称 |
+   | 4 | **業界特有の言い方（隠語）** | その業界では日常語だが、外から来た人には通じないもの |
+   | 5 | **社内システム名・ツール名** | 「◯◯システムに登録」「例のフォルダ」「いつもの画面」 |
+
+   2〜5は**書き手には難しく見えません。** 毎日使っているからです。いちばん見落とされます。
+   とくに5は、名前が付いているぶん**説明した気になりやすい**ものです。**何をするシステムかが書かれていなければ指摘する。**
+
+3-2. **登場する人・組織・取引先の「関係性」が定義されているかを見る。** ここは用語とは別の観点です。
+
+   資料に会社名・部署名・担当者名が出てくるとき、**その相手が何をする相手なのか**が書かれているか。
+
+   | 見るところ | 落ちている例 |
+   |---|---|
+   | その会社は**何を契約している相手か** | 社名しか書かれていない。業務範囲が不明 |
+   | 複数の取引先が出るとき、**どちらが何を担当するか** | 両方の名前は出るが、責任の境界が書かれていない |
+   | その部署は**何を判断する部署か** | 「◯◯部へ連絡」とあるが、何を頼めるのかが不明 |
+   | 問題が起きたとき、**どこへ持っていくのか** | 連絡先はあるが、どの種類の問題を扱うかが不明 |
+
+   > **名前を知っていることと、関係が分かっていることは別です。**
+   > 社名を知っていても「何を契約している相手か」が定義されていないと、
+   > **関係のない相手に問い合わせが飛びます。** 引き継ぎ資料で実際によく起きる事故です。
 4. 各語について、**初出の時点で説明があるか**、その説明が**機能を説明しているか**を判定する
 5. 下の形式で返す
 
@@ -55,8 +79,18 @@ description: "Use this skill when the user wants to check whether a draft explai
 |---|---|---|---|---|
 ```
 
-表のあとに、**まず直す3件**だけを挙げます。理由は「そこで読者が離脱するから」で説明します。
+**登場する人・組織・取引先の関係性**に抜けがあれば、用語の表とは分けて、続けて挙げます。
+
+```
+## 関係性が定義されていないところ
+| 出てくる名前 | 書かれていること | 抜けていること |
+```
+
+そのうえで、**まず直す3件**だけを挙げます。理由は「そこで読者が離脱するから」で説明します。
 4件目以降は表に残っているので、それで十分です。
+
+> **関係性の抜けは、用語より優先度が高いことがあります。**
+> 用語が分からなければ調べられますが、**誰が何をする相手かは、調べても出てきません。**
 
 ## 比喩の点検（比喩があるときだけ）
 
